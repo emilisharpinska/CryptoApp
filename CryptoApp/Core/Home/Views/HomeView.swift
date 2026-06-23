@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct HomeView: View {
+    
+    @State private var showPortfolio: Bool = false
+    @State private var isAnimated: Bool = false
+    
     var body: some View {
         ZStack{
             //background layer
@@ -16,7 +20,7 @@ struct HomeView: View {
             
             //content layer
             VStack{
-                Text("Header")
+                homeHeader
                 Spacer(minLength: 0)
             }
         }
@@ -24,5 +28,36 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    NavigationView {
+        HomeView()
+            .navigationBarHidden(true)
+    }
+}
+
+extension HomeView {
+    private var homeHeader: some View {
+        HStack{
+            CircleButtonView(iconName: showPortfolio ? "plus" : "info")
+                .animation(.none, value: isAnimated)
+                .background(
+                    CircleButtonAnimationView(animate: $showPortfolio)
+                )
+            Spacer()
+            Text(showPortfolio ? "Portfolio" : "Live Prices")
+                .font(.headline)
+                .fontWeight(.heavy)
+                .foregroundStyle(Color.theme.accent)
+                .animation(.none, value: isAnimated)
+            Spacer()
+            CircleButtonView(iconName: "chevron.right")
+                .rotationEffect(Angle(degrees: showPortfolio ? 180 : 0))
+                .onTapGesture {
+                    withAnimation(.spring()){
+                        showPortfolio.toggle()
+                        isAnimated.toggle()
+                    }
+                }
+        }
+        .padding(.horizontal)
+    }
 }
